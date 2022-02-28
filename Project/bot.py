@@ -1,15 +1,16 @@
 import re
 import discord
-# client 是我們與 Discord 連結的橋樑
+import json
+import os
+
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
 
-# 調用 event 函式庫
-
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"config.json") , "r", encoding = "utf8") as file:
+    config = json.load(file)
 
 @client.event
-# 當機器人完成啟動時
 async def on_ready():
     print('目前登入身份：', client.user)
 
@@ -41,4 +42,4 @@ async def on_message(message):
     #     await message.channel.send('pong')
 
 
-client.run('OTQ3ODU0NjAwODM5NTE2MjYw.YhzUYw.26wpevvmghqYPUem8POxxRj5raM')
+client.run(config['token'])
