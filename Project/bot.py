@@ -52,6 +52,7 @@ async def usage(ctx):
     file = file.replace(':DisgustingReaction:', str(disgustingEmoji))
     await ctx.send(file)
 
+
 @client.event
 async def on_ready():
     print('目前登入身份：', client.user)
@@ -66,7 +67,7 @@ async def on_raw_reaction_add(payload):
     textChannel = client.get_channel(payload.channel_id)
     msg = await textChannel.fetch_message(payload.message_id)
     reaction = get(msg.reactions, emoji=payload.emoji)
-    if len(msg.attachments) == 0:
+    if len(msg.attachments) and len(msg.embeds) == 0:
         return
 
     if reaction and reaction.count >= config['disgustingCount']:
