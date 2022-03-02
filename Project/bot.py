@@ -6,6 +6,7 @@ from discord.ext import commands
 from discord.utils import get
 import json
 import os
+from datetime import timezone, timedelta
 
 path = os.path.dirname(os.path.abspath(__file__))
 with open(os.path.join(path, "config.json"), "r", encoding="utf8") as file:
@@ -84,7 +85,12 @@ async def on_raw_reaction_add(payload):
         channel = get(client.get_guild(
             payload.guild_id).text_channels, name=config['channel'])
         await textChannel.send(f"因為 {msg.author.mention} 的訊息過激，已被刪除並移至 {channel.mention}。")
-        content = f'{msg.author.mention} 於 {msg.created_at.strftime("%Y-%m-%d %H:%M:%S")}\n' + msg.content
+
+        utcOffset = timezone(timedelta(hours=config['utcOffset']))
+        time = msg.created_at.replace(tzinfo=timezone.utc)
+        content = f'{msg.author.mention} 於 {time.astimezone(utcOffset).strftime("%Y-%m-%d %H:%M:%S")}\n' + \
+            msg.content
+
         files = []
         for a in msg.attachments:
             files.append(await a.to_file())
