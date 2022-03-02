@@ -43,6 +43,15 @@ async def disgustingSetup(ctx):
         await guild.create_custom_emoji(name='DisgustingReaction', image=fd.read())
 
 
+@client.command(name='usage')
+async def usage(ctx):
+    guild = ctx.guild
+    with open(os.path.join(path, "usage.txt"))as f:
+        file = f.read()
+    disgustingEmoji = get(client.emojis, name='DisgustingReaction')
+    file = file.replace(':DisgustingReaction:', str(disgustingEmoji))
+    await ctx.send(file)
+
 @client.event
 async def on_ready():
     print('目前登入身份：', client.user)

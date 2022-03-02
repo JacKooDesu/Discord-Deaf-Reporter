@@ -1,0 +1,9 @@
+Prefix: 
+    `-report`
+
+Commands:
+    `usage`  command usage
+    `deaf [user]`  report user self-deaf
+
+Reactions:
+    :DisgustingReaction:  report media message (message being reported 3 times will removed by default)
