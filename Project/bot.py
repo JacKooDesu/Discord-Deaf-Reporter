@@ -1,5 +1,6 @@
 import re
 from sys import prefix
+from turtle import position
 import discord
 from discord.ext import commands
 from discord.utils import get
@@ -43,6 +44,12 @@ async def disgustingSetup(ctx):
         await guild.create_custom_emoji(name='DisgustingReaction', image=fd.read())
 
 
+@client.command(name='channelSetup')
+async def channelSetup(ctx):
+    guild = ctx.guild
+    await guild.create_text_channel(config['channel'])
+
+
 @client.command(name='usage')
 async def usage(ctx):
     guild = ctx.guild
@@ -65,13 +72,23 @@ async def on_raw_reaction_add(payload):
         return
 
     textChannel = client.get_channel(payload.channel_id)
+    if textChannel.name == config['channel']:
+        return
+
     msg = await textChannel.fetch_message(payload.message_id)
     reaction = get(msg.reactions, emoji=payload.emoji)
-    if len(msg.attachments) and len(msg.embeds) == 0:
+    if len(msg.attachments) == 0 and len(msg.embeds) == 0:
         return
 
     if reaction and reaction.count >= config['disgustingCount']:
+        channel = get(client.get_guild(
+            payload.guild_id).text_channels, name=config['channel'])
+        await textChannel.send(f"因為 {msg.author.mention} 的訊息過激，已被刪除並移至 {channel.mention}。")
+        content = f'{msg.author.mention} 於 {msg.created_at.strftime("%Y-%m-%d %H:%M:%S")}\n' + msg.content
+        files = []
+        for a in msg.attachments:
+            files.append(await a.to_file())
+        await channel.send(content, files=files, embed=None if len(msg.embeds) == 0 else msg.embeds[0])
         await msg.delete()
-        await textChannel.send(f"因為 {msg.author.mention} 的訊息過激，已被刪除。")
 
 client.run(config['token'])
