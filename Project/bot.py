@@ -1,5 +1,3 @@
-from sys import prefix
-from turtle import position
 import discord
 from discord.ext import commands
 from discord.utils import get
